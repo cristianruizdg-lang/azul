@@ -1,0 +1,37 @@
+# ===============================================
+# DEPENDENCIAS DEL BACKEND - AZUL v3.0
+# ===============================================
+# Instalar con: pip install -r requirements.txt
+# ===============================================
+
+# --- Framework Web ---
+fastapi==0.109.0
+uvicorn[standard]==0.27.0
+python-multipart==0.0.6
+
+# --- IA en la Nube ---
+groq>=0.14.0
+
+# --- Base de Datos ---
+supabase>=2.12.0
+
+# --- Voz ---
+edge-tts>=7.2.8
+pyttsx3==2.90
+SpeechRecognition==3.10.1
+
+# --- Utilidades ---
+python-dotenv==1.0.0
+pydantic==2.5.3
+pydantic-settings==2.1.0
+
+# --- Comunicación ---
+websockets==12.0
+httpx>=0.26.0
+
+# --- Audio ---
+pydub==0.25.1
+
+# --- Opcional (para desarrollo) ---
+# pytest==7.4.3
+# pytest-asyncio==0.21.1

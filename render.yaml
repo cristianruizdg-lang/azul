@@ -1,0 +1,48 @@
+services:
+  # Azul Backend - FastAPI con Groq y Supabase
+  - type: web
+    name: azul-backend
+    runtime: python
+    region: oregon  # Cambiar a 'frankfurt' si estás en Europa
+    plan: free
+    
+    # Configuración de build
+    buildCommand: pip install -r backend/requirements.txt
+    
+    # Comando de inicio
+    startCommand: cd backend && uvicorn main:app --host 0.0.0.0 --port $PORT
+    
+    # Health check automático
+    healthCheckPath: /health
+    
+    # Variables de entorno
+    # IMPORTANTE: Las variables sensibles (GROQ_API_KEY, SUPABASE_KEY) 
+    # se deben configurar manualmente en el dashboard de Render por seguridad
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.0
+      
+      # Configuración de IA
+      - key: AI_MODEL
+        value: llama-3.3-70b-versatile
+      
+      - key: AI_TEMPERATURE
+        value: 0.7
+      
+      - key: AI_MAX_TOKENS
+        value: 150
+      
+      # Configuración de Voz
+      - key: VOICE_MODEL
+        value: es-MX-DaliaNeural
+      
+      - key: VOICE_RATE
+        value: +0%
+      
+      - key: VOICE_PITCH
+        value: +0Hz
+      
+      # Variables sensibles (configurar en dashboard):
+      # GROQ_API_KEY - Tu API key de Groq
+      # SUPABASE_URL - URL de tu proyecto Supabase  
+      # SUPABASE_KEY - Key anónima de Supabase

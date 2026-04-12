@@ -1,0 +1,83 @@
+# ===============================================
+# .gitignore - Archivos a NO subir a GitHub
+# ===============================================
+
+# --- Credenciales y Configuración Sensible ---
+.env
+.env.local
+.env.*.local
+*.key
+secrets/
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# --- Virtual Environment ---
+venv/
+ENV/
+env/
+.venv
+
+# --- IDEs ---
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# --- Logs y Temporales ---
+*.log
+temp/
+tmp/
+temp_audio/
+*.mp3
+*.wav
+
+# --- Testing ---
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# --- Jupyter Notebook ---
+.ipynb_checkpoints
+
+# --- Bases de Datos Locales ---
+*.db
+*.sqlite
+*.sqlite3
+
+# --- Backups ---
+*.bak
+backup/
+
+# --- Sistema Operativo ---
+Thumbs.db
+desktop.ini
+.Spotlight-V100
+.Trashes
+
+# --- Específico del Proyecto ---
+data/calendario.json
+# (Este archivo se genera automáticamente, no subir)
