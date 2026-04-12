@@ -20,7 +20,7 @@ services:
     # se deben configurar manualmente en el dashboard de Render por seguridad
     envVars:
       - key: PYTHON_VERSION
-        value: 3.12.0
+        value: "3.12"
       
       # Configuración de IA
       - key: AI_MODEL
