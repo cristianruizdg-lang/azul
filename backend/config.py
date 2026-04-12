@@ -56,10 +56,5 @@ def validate_config():
     
     return True
 
-# Validar al importar
-try:
-    validate_config()
-    print("✅ Configuración validada correctamente")
-except ValueError as e:
-    print(f"❌ Error en configuración:\n{e}")
-    raise
+# NO validar al importar en producción
+# La validación se hace en el startup event de main.py
