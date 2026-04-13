@@ -4,6 +4,19 @@
 
 Tu aplicación de escritorio ahora usa el backend en la nube en lugar de Ollama local.
 
+**IMPORTANTE:** `jarvis_cloud.py` mantiene el **diseño completo original** de tu app:
+- ✅ Pantalla de bienvenida animada con gradiente
+- ✅ Esfera 3D flotante animada
+- ✅ Espectro de audio visual
+- ✅ Lista de tareas como pantalla principal
+- ✅ Todas las animaciones y efectos visuales
+- ✅ Mismo look & feel que `jarvis_funcional.py`
+
+**Solo cambió la lógica interna:** Ollama local → API Cloud (Groq)
+
+**Nota sobre Calendario/Tareas:**  
+Los módulos de calendario están simplificados en la versión cloud (usan versiones "dummy" que no requieren Ollama local). Toda la funcionalidad principal de chat con IA y voz está completamente funcional.
+
 ---
 
 ## 📁 **Archivos Creados**
