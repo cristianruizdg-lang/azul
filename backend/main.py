@@ -50,9 +50,9 @@ app.include_router(chat.router)
 
 # === ENDPOINTS PRINCIPALES ===
 
-@app.get("/", tags=["sistema"])
+@app.api_route("/", methods=["GET", "HEAD"], tags=["sistema"])
 async def root():
-    """Endpoint raíz con información básica del API"""
+    """Endpoint raíz con información básica del API (GET y HEAD para monitoring)"""
     return {
         "app": "Azul Backend API",
         "version": "3.0.0",
@@ -62,10 +62,10 @@ async def root():
         "powered_by": "FastAPI + Groq + Supabase"
     }
 
-@app.get("/health", response_model=HealthResponse, tags=["sistema"])
+@app.api_route("/health", methods=["GET", "HEAD"], response_model=HealthResponse, tags=["sistema"])
 async def health_check():
     """
-    Health check del servidor
+    Health check del servidor (GET y HEAD para UptimeRobot/monitoring)
     Verifica que todos los servicios estén funcionando
     """
     services_status = {
