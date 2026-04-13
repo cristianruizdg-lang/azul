@@ -1,0 +1,31 @@
+# ===============================================
+# DEPENDENCIAS - AZUL v3.0 DESKTOP (Cloud Edition)
+# ===============================================
+# Instalar con: pip install -r requirements_desktop.txt
+# ===============================================
+
+# --- Interfaz Gráfica ---
+customtkinter>=5.2.0
+
+# --- Reconocimiento de Voz ---
+speechrecognition>=3.10.0
+pyaudio>=0.2.13  # Para capturar micrófono
+
+# --- Audio ---
+pygame>=2.5.0  # Para reproducir MP3s descargados de la API
+
+# --- HTTP Client ---
+requests>=2.31.0
+
+# --- Variables de entorno ---
+python-dotenv>=1.0.0
+
+# --- Base de datos (para UI de calendario/tareas) ---
+supabase>=2.7.0
+
+# --- Utilidades ---
+numpy>=1.24.0
+
+# --- Notificaciones Windows (opcional) ---
+# Descomenta si quieres notificaciones del sistema
+# win10toast>=0.9
