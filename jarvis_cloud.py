@@ -783,12 +783,8 @@ Recuerda: Conoce al usuario, pero no lo acoses con sus gustos. Usa tu conocimien
         # El aprendizaje profundo lo hace el backend cloud automáticamente
         # durante las conversaciones con Groq
         
-        if self.contexto_usuario is None:
-            self.contexto_usuario = ""
-        else:
-                    self.contexto_usuario = f"- {clave}: {valor}"
-                
-                self.actualizar_instrucciones_sistema()
+        # Actualizar instrucciones (opcional, para refrescar contexto)
+        self.actualizar_instrucciones_sistema()
     
     def agregar_contexto_tiempo_real(self, texto: str) -> bool:
         """

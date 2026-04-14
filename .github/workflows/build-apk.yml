@@ -1,0 +1,76 @@
+name: Compilar APK Android
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'mobile/**'
+  workflow_dispatch:  # Permite ejecutar manualmente desde GitHub
+
+jobs:
+  build-apk:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout código
+      uses: actions/checkout@v4
+    
+    - name: Configurar Python 3.12
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+    
+    - name: Instalar dependencias del sistema
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y \
+          git zip unzip openjdk-17-jdk python3-pip \
+          autoconf libtool pkg-config zlib1g-dev \
+          libncurses5-dev libncursesw5-dev libtinfo5 \
+          cmake libffi-dev libssl-dev
+    
+    - name: Instalar buildozer y Cython
+      run: |
+        pip install --upgrade pip
+        pip install buildozer cython
+    
+    - name: Cache de buildozer
+      uses: actions/cache@v3
+      with:
+        path: |
+          ~/.buildozer
+          mobile/.buildozer
+        key: ${{ runner.os }}-buildozer-${{ hashFiles('mobile/buildozer.spec') }}
+        restore-keys: |
+          ${{ runner.os }}-buildozer-
+    
+    - name: Compilar APK
+      working-directory: mobile
+      run: |
+        buildozer -v android debug
+    
+    - name: Renombrar APK con fecha
+      working-directory: mobile/bin
+      run: |
+        DATE=$(date +%Y%m%d-%H%M)
+        mv *.apk azul-mobile-${DATE}-debug.apk
+        echo "APK_FILE=$(ls azul-mobile-*.apk)" >> $GITHUB_ENV
+    
+    - name: Subir APK como artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: azul-mobile-apk
+        path: mobile/bin/${{ env.APK_FILE }}
+        retention-days: 30
+    
+    - name: Crear Release (opcional)
+      if: github.ref == 'refs/heads/main'
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: v0.1-${{ github.run_number }}
+        name: Azul Mobile v0.1 Build ${{ github.run_number }}
+        files: mobile/bin/${{ env.APK_FILE }}
+        draft: false
+        prerelease: true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

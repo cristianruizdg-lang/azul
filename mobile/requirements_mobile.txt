@@ -1,0 +1,20 @@
+# Azul Mobile - Dependencias
+# Para testing en PC y compilación APK
+
+# Framework UI
+kivy>=2.3.0
+kivymd>=1.2.0
+
+# HTTP Client
+requests>=2.31.0
+
+# Audio (desktop testing)
+sounddevice>=0.4.6
+soundfile>=0.12.1
+
+# Utilidades
+python-dotenv>=1.0.0
+
+# Android specific (handled by buildozer)
+# - pyjnius (para Android APIs)
+# - plyer (para permisos y features Android)
