@@ -74,18 +74,28 @@ jobs:
     - name: Compilar APK con buildozer
       working-directory: mobile
       env:
-        ANDROID_HOME: ${{ env.ANDROID_HOME }}
+        ANDROID_HOME: ${{ env.ANDROID_SDK_ROOT }}
         ANDROID_SDK_ROOT: ${{ env.ANDROID_SDK_ROOT }}
+        ANDROIDSDK: ${{ env.ANDROID_SDK_ROOT }}
+        ANDROIDNDK: ${{ env.ANDROID_SDK_ROOT }}/ndk-bundle
+        ANDROIDAPI: "33"
       run: |
         # Mostrar configuración Android
         echo "ANDROID_SDK_ROOT: $ANDROID_SDK_ROOT"
-        echo "ANDROID_HOME: $ANDROID_HOME"
+        echo "ANDROIDSDK: $ANDROIDSDK"
         ls -la $ANDROID_SDK_ROOT/build-tools/ || true
+        
+        # Crear enlaces simbólicos si buildozer busca en otra ubicación
+        mkdir -p ~/.buildozer/android/platform/android-sdk
+        ln -s $ANDROID_SDK_ROOT/build-tools ~/.buildozer/android/platform/android-sdk/build-tools || true
+        ln -s $ANDROID_SDK_ROOT/platforms ~/.buildozer/android/platform/android-sdk/platforms || true
+        ln -s $ANDROID_SDK_ROOT/platform-tools ~/.buildozer/android/platform/android-sdk/platform-tools || true
         
         # Compilar APK
         buildozer -v android debug || {
           echo "Error al compilar. Mostrando logs..."
           cat .buildozer/android/platform/build-*/build.log 2>/dev/null || echo "No se encontraron logs de compilación"
+          find .buildozer -name "*.log" -type f -exec echo "=== {} ===" \; -exec tail -100 {} \; || true
           exit 1
         }
     
