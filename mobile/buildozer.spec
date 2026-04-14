@@ -39,6 +39,9 @@ android.api = 33
 android.minapi = 21
 android.ndk = 25b
 
+# Aceptar licencias automáticamente
+android.accept_sdk_license = True
+
 # SDK path (buildozer lo descarga automáticamente)
 # android.sdk_path = 
 # android.ndk_path = 
