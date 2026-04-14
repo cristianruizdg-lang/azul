@@ -38,6 +38,17 @@ jobs:
     - name: Setup Android SDK
       uses: android-actions/setup-android@v3
     
+    - name: Instalar Android Build Tools y NDK
+      run: |
+        # Instalar build-tools y platform-tools
+        sdkmanager "build-tools;33.0.0" "platform-tools" "platforms;android-33"
+        
+        # Aceptar todas las licencias
+        yes | sdkmanager --licenses || true
+        
+        # Verificar instalación
+        sdkmanager --list_installed
+    
     - name: Instalar buildozer y Cython
       run: |
         pip install --upgrade pip setuptools wheel
@@ -53,24 +64,28 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-buildozer-
     
-    - name: Configurar buildozer init
-      working-directory: mobile
+    - name: Configurar variables de entorno Android
       run: |
-        # Aceptar licencias de Android
-        yes | sdkmanager --licenses || true
-        
-        # Configurar variables de entorno
-        export ANDROID_HOME=$ANDROID_SDK_ROOT
-        export ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT
-        export PATH=$PATH:$ANDROID_SDK_ROOT/platform-tools
-        
+        echo "ANDROID_HOME=$ANDROID_SDK_ROOT" >> $GITHUB_ENV
+        echo "ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT" >> $GITHUB_ENV
+        echo "$ANDROID_SDK_ROOT/platform-tools" >> $GITHUB_PATH
+        echo "$ANDROID_SDK_ROOT/build-tools/33.0.0" >> $GITHUB_PATH
+    
     - name: Compilar APK con buildozer
       working-directory: mobile
+      env:
+        ANDROID_HOME: ${{ env.ANDROID_HOME }}
+        ANDROID_SDK_ROOT: ${{ env.ANDROID_SDK_ROOT }}
       run: |
+        # Mostrar configuración Android
+        echo "ANDROID_SDK_ROOT: $ANDROID_SDK_ROOT"
+        echo "ANDROID_HOME: $ANDROID_HOME"
+        ls -la $ANDROID_SDK_ROOT/build-tools/ || true
+        
         # Compilar APK
         buildozer -v android debug || {
           echo "Error al compilar. Mostrando logs..."
-          cat .buildozer/android/platform/build-*/build.log || true
+          cat .buildozer/android/platform/build-*/build.log 2>/dev/null || echo "No se encontraron logs de compilación"
           exit 1
         }
     
