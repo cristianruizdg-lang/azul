@@ -17,10 +17,10 @@ source.include_exts = py,png,jpg,kv,atlas,json
 version = 0.1
 
 # Requerimientos de Python
-requirements = python3==3.12,kivy==2.3.1,kivymd==1.2.0,requests,pyjnius,android,pillow
+requirements = python3==3.11,kivy==2.3.0,kivymd==1.2.0,requests,pyjnius,android,pillow
 
 # Icono de la aplicación (512x512 px recomendado)
-icon.filename = assets/icon.png
+# icon.filename = assets/icon.png
 
 # Splash screen opcional
 # presplash.filename = assets/splash.png
@@ -31,8 +31,8 @@ orientation = portrait
 # Permisos de Android
 android.permissions = INTERNET,RECORD_AUDIO,WRITE_EXTERNAL_STORAGE,READ_EXTERNAL_STORAGE
 
-# Arquitecturas de Android (armv7a para compatibilidad)
-android.archs = arm64-v8a,armeabi-v7a
+# Arquitecturas de Android (arm64-v8a para dispositivos modernos)
+android.archs = arm64-v8a
 
 # API de Android
 android.api = 33
@@ -45,9 +45,6 @@ android.ndk = 25b
 
 # Características Android
 android.features = android.hardware.microphone
-
-# Meta-data
-android.meta_data = com.google.android.gms.version=@integer/google_play_services_version
 
 # Logs
 log_level = 2

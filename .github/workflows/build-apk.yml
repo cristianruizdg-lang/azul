@@ -5,6 +5,7 @@ on:
     branches: [ main ]
     paths:
       - 'mobile/**'
+      - '.github/workflows/build-apk.yml'
   workflow_dispatch:  # Permite ejecutar manualmente desde GitHub
 
 jobs:
@@ -15,26 +16,32 @@ jobs:
     - name: Checkout código
       uses: actions/checkout@v4
     
-    - name: Configurar Python 3.12
+    - name: Configurar Python 3.11
       uses: actions/setup-python@v5
       with:
-        python-version: '3.12'
+        python-version: '3.11'
     
-    - name: Instalar dependencias del sistema
+    - name: Instalar dependencias del sistema para buildozer
       run: |
         sudo apt-get update
         sudo apt-get install -y \
-          git zip unzip openjdk-17-jdk python3-pip \
-          autoconf libtool pkg-config zlib1g-dev \
-          libncurses5-dev libncursesw5-dev libtinfo5 \
-          cmake libffi-dev libssl-dev
+          git zip unzip openjdk-17-jdk wget \
+          autoconf libtool pkg-config \
+          zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo5 \
+          cmake libffi-dev libssl-dev \
+          build-essential libltdl-dev libreadline-dev libsqlite3-dev \
+          python3-pip python3-dev python3-setuptools \
+          ccache
+    
+    - name: Setup Android SDK
+      uses: android-actions/setup-android@v3
     
     - name: Instalar buildozer y Cython
       run: |
-        pip install --upgrade pip
-        pip install buildozer cython
+        pip install --upgrade pip setuptools wheel
+        pip install buildozer==1.5.0 cython==0.29.36
     
-    - name: Cache de buildozer
+    - name: Cache de buildozer y Android NDK/SDK
       uses: actions/cache@v3
       with:
         path: |
@@ -44,32 +51,65 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-buildozer-
     
-    - name: Compilar APK
+    - name: Configurar buildozer init
       working-directory: mobile
       run: |
-        buildozer -v android debug
+        # Aceptar licencias de Android
+        yes | sdkmanager --licenses || true
+        
+        # Configurar variables de entorno
+        export ANDROID_HOME=$ANDROID_SDK_ROOT
+        export ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT
+        export PATH=$PATH:$ANDROID_SDK_ROOT/platform-tools
+        
+    - name: Compilar APK con buildozer
+      working-directory: mobile
+      run: |
+        # Compilar APK
+        buildozer -v android debug || {
+          echo "Error al compilar. Mostrando logs..."
+          cat .buildozer/android/platform/build-*/build.log || true
+          exit 1
+        }
     
     - name: Renombrar APK con fecha
+      if: success()
       working-directory: mobile/bin
       run: |
         DATE=$(date +%Y%m%d-%H%M)
-        mv *.apk azul-mobile-${DATE}-debug.apk
-        echo "APK_FILE=$(ls azul-mobile-*.apk)" >> $GITHUB_ENV
+        APK_FILE=$(ls *.apk | head -n 1)
+        NEW_NAME="azul-mobile-${DATE}-debug.apk"
+        mv "$APK_FILE" "$NEW_NAME"
+        echo "APK_NAME=$NEW_NAME" >> $GITHUB_ENV
     
     - name: Subir APK como artifact
+      if: success()
       uses: actions/upload-artifact@v4
       with:
         name: azul-mobile-apk
-        path: mobile/bin/${{ env.APK_FILE }}
+        path: mobile/bin/${{ env.APK_NAME }}
         retention-days: 30
     
-    - name: Crear Release (opcional)
-      if: github.ref == 'refs/heads/main'
+    - name: Crear Release
+      if: success() && github.ref == 'refs/heads/main'
       uses: softprops/action-gh-release@v1
       with:
-        tag_name: v0.1-${{ github.run_number }}
+        tag_name: v0.1-build${{ github.run_number }}
         name: Azul Mobile v0.1 Build ${{ github.run_number }}
-        files: mobile/bin/${{ env.APK_FILE }}
+        body: |
+          📱 **Azul Mobile - Compilación Automática**
+          
+          ✅ APK compilado exitosamente con GitHub Actions
+          🔗 Backend: https://azul-4xsp.onrender.com
+          
+          **Instalación:**
+          1. Descarga el APK en tu Android
+          2. Habilita "Fuentes desconocidas"
+          3. Instala el APK
+          4. Permite permisos: Internet, Micrófono, Almacenamiento
+          
+          **Primera ejecución puede tardar ~30 seg conectando al backend**
+        files: mobile/bin/${{ env.APK_NAME }}
         draft: false
         prerelease: true
       env:
